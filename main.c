@@ -89,8 +89,8 @@ char recvchr(int sockfd) {
 void* server(void* sockfd_void) {
     int sockfd = (int) (intptr_t) sockfd_void;
     char c;
-    int WIDTH = 0;
-    int HEIGHT = 0;
+    int term_width = 0;
+    int term_height = 0;
 
     bool echo_status = false;
     bool line_status = false;
@@ -103,7 +103,7 @@ void* server(void* sockfd_void) {
     sendall(sockfd, T_CSI T_CLR,  4);
     sendall(sockfd, T_CSI T_HIDE, 6);
 
-    player_t* player = player_init(&world);
+    player_t* player = player_init(&world, pthread_self());
     char buf[20*80];
 
     while (1) {
@@ -113,7 +113,7 @@ void* server(void* sockfd_void) {
         if (!echo_status || !line_status || !naws_status) {
             sendall(sockfd, "Negotiating terminal parameters...", 0);
             sendall(sockfd, T_CRLF, 2);
-        } else if (WIDTH < 80 || HEIGHT < 20) {
+        } else if (term_width < 80 || term_height < 20) {
             sendall(sockfd, "Please resize your terminal window to 80x20.", 0);
             sendall(sockfd, T_CRLF, 2);
         } else {
@@ -167,10 +167,10 @@ void* server(void* sockfd_void) {
                 if (c == T_SB[0]) {
                     c = recvchr(sockfd);
                     if (c == T_NAWS[0]) {
-                        WIDTH  = (((int)(unsigned char)recvchr(sockfd))<<8) +
-                                  ((int)(unsigned char)recvchr(sockfd));
-                        HEIGHT = (((int)(unsigned char)recvchr(sockfd))<<8) +
-                                  ((int)(unsigned char)recvchr(sockfd));
+                        term_width  = (((int)(unsigned char)recvchr(sockfd))<<8) +
+                                       ((int)(unsigned char)recvchr(sockfd));
+                        term_height = (((int)(unsigned char)recvchr(sockfd))<<8) +
+                                       ((int)(unsigned char)recvchr(sockfd));
                         if (recvchr(sockfd) != T_IAC[0]) {
                             sendall(sockfd, "Could not negotiate NAWS!", 0);
                             close(sockfd);

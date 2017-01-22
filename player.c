@@ -10,7 +10,8 @@ void* world_loop(void* world_void) {
         for (i=0; i<1024; i++) {
             if (world->players[i] != NULL) {
                 fflush(stdout);
-                if (ping - world->players[i]->ping > 4) {
+                if (ping - world->players[i]->ping > TIMEOUT) {
+                    pthread_cancel(world->players[i]->server);
                     free(world->players[i]);
                     world->players[i] = NULL;
                 } else {
@@ -21,9 +22,10 @@ void* world_loop(void* world_void) {
     }
 }
 
-player_t* player_init(world_t* world) {
+player_t* player_init(world_t* world, pthread_t server) {
     player_t* p = malloc(sizeof(player_t));
     p->world = world;
+    p->server = server;
     p->ping = time(NULL);
     for (int i=0; i<1024; i++) {
         if (p->world->players[i] == NULL) {
