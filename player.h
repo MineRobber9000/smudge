@@ -11,6 +11,7 @@ typedef struct world {
     struct player* players[1024];
 } world_t;
 
+void  world_init(world_t* world);
 void* world_loop(void* world_void);
 
 typedef struct player {

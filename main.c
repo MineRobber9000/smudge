@@ -221,27 +221,15 @@ int spawn_server(int sockfd) {
     return 0;
 }
 
-int spawn_world(world_t* world) {
-    pthread_t thread;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    if (pthread_create(&thread, &attr, world_loop, (void*)world) != 0) {
-        return -1;
-    }
-    pthread_attr_destroy(&attr);
-    return 0;
-}
-
-
 void start_server(char* port) {
-    signal(SIGPIPE, SIG_IGN);
     struct sockaddr_storage their_addr;
     socklen_t addr_size;
     struct addrinfo hints, *addrinfo, *c_addrinfo;
     int sockfd, new_fd;
     int yes=1;
     char buf[512];
+
+    signal(SIGPIPE, SIG_IGN);
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
@@ -312,11 +300,7 @@ void start_server(char* port) {
 
 
 int main(void) {
-    if (spawn_world(&world) != 0) {
-        fprintf(stderr, "Error (pthread)");
-        exit(1);
-    }
+    world_init(&world);
     start_server(PORT);
     return 0;
 }
-

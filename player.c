@@ -1,5 +1,17 @@
 #include "player.h"
 
+void world_init(world_t* world) {
+    pthread_t thread;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    if (pthread_create(&thread, &attr, world_loop, (void*)world) != 0) {
+        fprintf(stderr, "Could not launch world.");
+        exit(1);
+    }
+    pthread_attr_destroy(&attr);
+}
+
 void* world_loop(void* world_void) {
     world_t* world = (world_t*) world_void;
     int i;
@@ -11,6 +23,7 @@ void* world_loop(void* world_void) {
             if (world->players[i] != NULL) {
                 fflush(stdout);
                 if (ping - world->players[i]->ping > TIMEOUT) {
+                    // Just in case!
                     pthread_cancel(world->players[i]->server);
                     free(world->players[i]);
                     world->players[i] = NULL;
