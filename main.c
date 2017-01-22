@@ -167,10 +167,10 @@ void* server(void* sockfd_void) {
                 if (c == T_SB[0]) {
                     c = recvchr(sockfd);
                     if (c == T_NAWS[0]) {
-                        term_width  = (((int)(unsigned char)recvchr(sockfd))<<8) +
-                                       ((int)(unsigned char)recvchr(sockfd));
-                        term_height = (((int)(unsigned char)recvchr(sockfd))<<8) +
-                                       ((int)(unsigned char)recvchr(sockfd));
+                        term_width   = (int)(unsigned char)recvchr(sockfd)<<8;
+                        term_width  += (int)(unsigned char)recvchr(sockfd);
+                        term_height  = (int)(unsigned char)recvchr(sockfd)<<8;
+                        term_height += (int)(unsigned char)recvchr(sockfd);
                         if (recvchr(sockfd) != T_IAC[0]) {
                             sendall(sockfd, "Could not negotiate NAWS!", 0);
                             close(sockfd);
