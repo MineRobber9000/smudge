@@ -234,7 +234,7 @@ int spawn_world(world_t* world) {
 }
 
 
-void start_server() {
+void start_server(char* port) {
     signal(SIGPIPE, SIG_IGN);
     struct sockaddr_storage their_addr;
     socklen_t addr_size;
@@ -248,7 +248,7 @@ void start_server() {
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
 
-    if (getaddrinfo(NULL, PORT, &hints, &addrinfo) != 0) {
+    if (getaddrinfo(NULL, port, &hints, &addrinfo) != 0) {
         fprintf(stderr, "Error (getaddrinfo)");
         exit(1);
     }
@@ -314,8 +314,9 @@ void start_server() {
 int main(void) {
     if (spawn_world(&world) != 0) {
         fprintf(stderr, "Error (pthread)");
+        exit(1);
     }
-    start_server();
+    start_server(PORT);
     return 0;
 }
 
