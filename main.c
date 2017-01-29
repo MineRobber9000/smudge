@@ -14,7 +14,6 @@
 
 #include "world.h"
 
-#define PORT "1337"
 #define BACKLOG 10
 
 // https://tools.ietf.org/html/rfc854  -- negotiations

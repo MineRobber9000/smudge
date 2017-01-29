@@ -5,7 +5,9 @@
 #include <pthread.h>
 #include <time.h>
 
-#define TIMEOUT 4
+#define WORLD_TIMEOUT 4
+#define WORLD_CAPACITY 1024
+
 
 typedef struct world {
     struct player* players[1024];
