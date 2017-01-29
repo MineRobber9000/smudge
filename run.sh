@@ -1,1 +1,1 @@
-gcc -pthread world.c main.c -o game; ./game 1337
+gcc -pthread world.c mudpie.c -o game; ./game 1337

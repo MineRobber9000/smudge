@@ -7,7 +7,7 @@ the socket.
 To build a game, implement a world according to world.h, then link it to main.c
 and execute.
 
-$ gcc -c main.c
+$ gcc -c mudpie.c
 $ gcc -c world.c
-$ gcc main.o world.o -o game
+$ gcc mudpie.o world.o -o game
 $ ./game 1337
