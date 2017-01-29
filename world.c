@@ -1,12 +1,14 @@
-#include "player.h"
+#include "world.h"
 
-void world_init(world_t* world) {
+world_t world;
+
+void world_init() {
     pthread_t thread;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    if (pthread_create(&thread, &attr, world_loop, (void*)world) != 0) {
-        fprintf(stderr, "Could not launch world.");
+    if (pthread_create(&thread, &attr, world_loop, (void*)&world) != 0) {
+        fprintf(stderr, "Could not launch world.\n");
         exit(1);
     }
     pthread_attr_destroy(&attr);
@@ -35,9 +37,9 @@ void* world_loop(void* world_void) {
     }
 }
 
-player_t* player_init(world_t* world, pthread_t server) {
+player_t* player_init(pthread_t server) {
     player_t* p = malloc(sizeof(player_t));
-    p->world = world;
+    p->world = &world;
     p->server = server;
     p->ping = time(NULL);
     for (int i=0; i<1024; i++) {

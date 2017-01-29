@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "player.h"
+#include "world.h"
 
 #define PORT "1337"
 #define BACKLOG 10
@@ -40,8 +40,6 @@
 #define T_ORIG "1;1H"
 #define T_HIDE "?25l" // tput civis [man terminfo]
 #define T_SHOW "?25h" // tput cnorm [man terminfo]
-
-world_t world;
 
 void sendall(int sockfd, const void *buf, size_t len) {
     int i;
@@ -103,7 +101,7 @@ void* server(void* sockfd_void) {
     sendall(sockfd, T_CSI T_CLR,  4);
     sendall(sockfd, T_CSI T_HIDE, 6);
 
-    player_t* player = player_init(&world, pthread_self());
+    player_t* player = player_init(pthread_self());
     char buf[20*80];
 
     while (1) {
@@ -237,7 +235,7 @@ void start_server(char* port) {
     hints.ai_flags = AI_PASSIVE;
 
     if (getaddrinfo(NULL, port, &hints, &addrinfo) != 0) {
-        fprintf(stderr, "Error (getaddrinfo)");
+        fprintf(stderr, "Error (getaddrinfo)\n");
         exit(1);
     }
 
@@ -274,7 +272,7 @@ void start_server(char* port) {
     }
 
     if (c_addrinfo == NULL) {
-        fprintf(stderr, "Failed to bind socket.");
+        fprintf(stderr, "Failed to bind socket.\n");
         exit(1);
     }
 
@@ -285,6 +283,8 @@ void start_server(char* port) {
 
     freeaddrinfo(addrinfo);
 
+    fprintf(stderr, "[+] Listening on port %s\n", port);
+
     addr_size = sizeof their_addr;
     while (1) {
         new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
@@ -293,14 +293,19 @@ void start_server(char* port) {
             continue;
         }
         if (spawn_server(new_fd) != 0) {
-            fprintf(stderr, "Error (pthread)");
+            fprintf(stderr, "Error (pthread)\n");
         }
     }
 }
 
 
-int main(void) {
-    world_init(&world);
-    start_server(PORT);
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <port>\n", argv[0]);
+        exit(1);
+    }
+    char* port = argv[1];
+    world_init();
+    start_server(port);
     return 0;
 }
