@@ -101,7 +101,7 @@ void* server(void* sockfd_void) {
     sendall(sockfd, T_CSI T_HIDE, 6);
 
     player_t* player = player_init(pthread_self());
-    char buf[20*80];
+    char buf[20][80];
 
     while (1) {
         usleep(16000);
@@ -114,9 +114,9 @@ void* server(void* sockfd_void) {
             sendall(sockfd, "Please resize your terminal window to 80x20.", 0);
             sendall(sockfd, T_CRLF, 2);
         } else {
-            player_draw(player, (char*)buf, 80, 20);
+            player_draw(player, buf, 80, 20);
             for (int i=0; i<20; i++) {
-                sendall(sockfd, buf + (i*80), 80);
+                sendall(sockfd, buf[i], 80);
                 sendall(sockfd, T_CRLF, 2);
             }
         }

@@ -11,6 +11,7 @@
 
 typedef struct world {
     struct player* players[1024];
+    char stage[20][80];
 } world_t;
 
 void  world_init();
@@ -18,8 +19,13 @@ void* world_loop(void* world_void);
 
 typedef struct player {
     int x;
+    int dx;
     int y;
-    world_t* world;
+    int dy;
+
+    int wand_x;
+    int wand_y;
+
     pthread_t server;
     long int ping;
 } player_t;
@@ -27,4 +33,4 @@ typedef struct player {
 player_t* player_init(pthread_t server);
 void player_tick(player_t* p);
 void player_char(player_t* p, char c);
-void player_draw(player_t* p, char* buf, int width, int height);
+void player_draw(player_t* p, char buf[20][80], int width, int height);
