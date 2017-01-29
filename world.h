@@ -10,7 +10,7 @@
 
 
 typedef struct world {
-    struct player* players[1024];
+    struct player* players[WORLD_CAPACITY];
     char stage[20][80];
 } world_t;
 
