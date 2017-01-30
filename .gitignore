@@ -1,0 +1,4 @@
+game
+*.o
+*.sublime-project
+*.sublime-workspace
