@@ -2,9 +2,6 @@
 
 world_t world;
 
-const int WORLD_HEIGHT = 20;
-const int WORLD_WIDTH  = 80;
-
 bool bound_check(int x, int y){
     if (x >= 0 && x < WORLD_WIDTH && y >= 0 && y < WORLD_HEIGHT) {
         return true;

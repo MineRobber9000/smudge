@@ -9,6 +9,10 @@
 #define WORLD_TIMEOUT 4
 #define WORLD_CAPACITY 1024
 
+#define WORLD_WIDTH  80
+#define WORLD_HEIGHT 20
+
+
 typedef struct world {
     struct player* players[WORLD_CAPACITY];
     char stage[20][80];
