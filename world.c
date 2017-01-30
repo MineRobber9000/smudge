@@ -90,8 +90,19 @@ void player_tick(player_t* p) {
         }
     }
     for (int i=0; i < abs(p->dx); i++) {
-        if (world.stage[p->y][p->x + sdx] == ' ') {
+        char t = world.stage[p->y][p->x + sdx];
+        if (t == ' ') {
             p->x += sdx;
+        } else if (t == '/'){
+            p->x += sdx;
+            if (sdx > 0){
+                p->y -= 1;
+            }
+        } else if (t == '\\'){
+            p->x += sdx;
+            if (sdx < 0){
+                p->y -= 1;
+            }
         } else {
             p->dx = 0;
             break;
@@ -101,6 +112,7 @@ void player_tick(player_t* p) {
 
 void player_char(player_t* p, char c) {
     // Respond to keypresses
+    // fprintf(stderr, "char: %x\n", '\x8');
     switch (c) {
     case 'w':
         p->dy = -4;
@@ -132,7 +144,18 @@ void player_char(player_t* p, char c) {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
         }
         break;
-
+    case '/':
+        if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == ' ') {
+            world.stage[p->y+p->wand_y][p->x+p->wand_x] = '/';
+        } else
+        world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
+        break;
+    case '\\':
+        if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == ' ') {
+            world.stage[p->y+p->wand_y][p->x+p->wand_x] = '\\';
+        } else
+        world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
+        break;
     case 'i':
         p->wand_x = 0;
         p->wand_y = -1;

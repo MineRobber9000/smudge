@@ -10,5 +10,5 @@ compiled copy to bake multiple MUDs. Obviously.
 
 $ gcc -c mudpie.c
 $ gcc -c world.c
-$ gcc mudpie.o world.o -o game
+$ gcc -pthread mudpie.o world.o -o game
 $ ./game 1337
