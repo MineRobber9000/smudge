@@ -147,14 +147,16 @@ void player_char(player_t* p, char c) {
     case '/':
         if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == ' ') {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = '/';
-        } else
-        world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
+        } else {
+            world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
+        }
         break;
     case '\\':
         if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == ' ') {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = '\\';
-        } else
-        world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
+        } else {
+            world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
+        }
         break;
     case 'i':
         p->wand_x = 0;
