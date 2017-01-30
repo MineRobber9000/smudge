@@ -2,6 +2,9 @@
 
 world_t world;
 
+const int WORLD_HEIGHT = 20;
+const int WORLD_WIDTH  = 80;
+
 void world_init() {
     pthread_t thread;
     pthread_attr_t attr;
@@ -13,7 +16,7 @@ void world_init() {
     }
     pthread_attr_destroy(&attr);
 
-    memset(world.stage, ' ', 80*20);
+    memset(world.stage, ' ', WORLD_WIDTH*WORLD_HEIGHT);
     for (int i= 0; i<80; i++) world.stage[19][i] = '#';
     for (int i= 0; i<80; i++) world.stage[ 0][i] = '#';
     for (int i= 0; i<20; i++) world.stage[i][ 0] = '#';
@@ -108,6 +111,17 @@ void player_tick(player_t* p) {
             break;
         }
     }
+    // loop player position if OOB
+    if (p->x < 0){
+        p->x = WORLD_WIDTH;
+    } else if (p->x > WORLD_WIDTH){
+        p->x = 0;
+    }
+    if (p->y < 0){
+        p->y = WORLD_HEIGHT;
+    } else if (p->y > WORLD_HEIGHT){
+        p->y = 0;
+    }
 }
 
 void player_char(player_t* p, char c) {
@@ -175,7 +189,7 @@ void player_char(player_t* p, char c) {
     }
 }
 
-void player_draw(player_t* p, char buf[20][80], int width, int height) {
+void player_draw(player_t* p, char buf[WORLD_HEIGHT][WORLD_WIDTH], int width, int height) {
     // Render the board onto buf, which has size (width * height)
     memcpy(buf, world.stage, width*height);
     //memset(buf, ' ', width*height);
