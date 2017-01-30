@@ -133,9 +133,11 @@ void player_char(player_t* p, char c) {
     // fprintf(stderr, "char: %x\n", c);
     switch (c) {
     case 'w':
+    case 'k':
         p->dy = -4;
         break;
     case 'a':
+    case 'h':
         if (p->dx > 0) {
             p->dx = 0;
         } else {
@@ -143,11 +145,19 @@ void player_char(player_t* p, char c) {
         }
         break;
     case 's':
-        if (world.stage[p->y][p->x+1] == '=') {
-            world.stage[p->y][p->x+1] = ' ';
+    case 'j':
+        if (p->wand_x == -1 && p->wand_y == 0) {
+            p->wand_x = 0; p->wand_y = -1;
+        } else if (p->wand_x == 0 && p->wand_y == -1) {
+            p->wand_x = 1; p->wand_y = 0;
+        } else if (p->wand_x == 1 && p->wand_y == 0) {
+            p->wand_x = 0; p->wand_y = 1;
+        } else if (p->wand_x == 0 && p->wand_y == 1) {
+            p->wand_x = -1; p->wand_y = 0;
         }
         break;
     case 'd':
+    case 'l':
         if (p->dx < 0) {
             p->dx = 0;
         } else {
@@ -160,7 +170,7 @@ void player_char(player_t* p, char c) {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = '=';
         }
         break;
-    case '\x7f':
+    case 'x':
         if (world.stage[p->y+p->wand_y][p->x+p->wand_x] != '#') {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
         }
@@ -176,6 +186,7 @@ void player_char(player_t* p, char c) {
         }
         break;
 
+/*
     case 'i':
         p->wand_x = 0;
         p->wand_y = -1;
@@ -192,6 +203,7 @@ void player_char(player_t* p, char c) {
         p->wand_x = 1;
         p->wand_y = 0;
         break;
+*/
     }
 }
 
