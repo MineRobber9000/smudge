@@ -100,12 +100,12 @@ void player_tick(player_t* p) {
         char t = world.stage[p->y][p->x + sdx];
         if (t == ' ') {
             p->x += sdx;
-        } else if (t == '/'){
+        } else if (t == '/'  && world.stage[p->y - 1][p->x + sdx] == ' '){
             p->x += sdx;
             if (sdx > 0){
                 p->y -= 1;
             }
-        } else if (t == '\\'){
+        } else if (t == '\\' && world.stage[p->y - 1][p->x + sdx] == ' ') {
             p->x += sdx;
             if (sdx < 0){
                 p->y -= 1;
