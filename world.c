@@ -2,6 +2,13 @@
 
 world_t world;
 
+bool bound_check(int x, int y){
+    if (x >= 0 && x < WORLD_WIDTH && y >= 0 && y < WORLD_HEIGHT) {
+        return true;
+    }
+    return false;
+}
+
 void world_init() {
     pthread_t thread;
     pthread_attr_t attr;
@@ -13,7 +20,7 @@ void world_init() {
     }
     pthread_attr_destroy(&attr);
 
-    memset(world.stage, ' ', 80*20);
+    memset(world.stage, ' ', WORLD_WIDTH*WORLD_HEIGHT);
     for (int i= 0; i<80; i++) world.stage[19][i] = '#';
     for (int i= 0; i<80; i++) world.stage[ 0][i] = '#';
     for (int i= 0; i<20; i++) world.stage[i][ 0] = '#';
@@ -108,11 +115,22 @@ void player_tick(player_t* p) {
             break;
         }
     }
+    // loop player position if OOB
+    if (p->x < 0){
+        p->x = WORLD_WIDTH-1;
+    } else if (p->x >= WORLD_WIDTH){
+        p->x = 0;
+    }
+    if (p->y < 0){
+        p->y = WORLD_HEIGHT-1;
+    } else if (p->y >= WORLD_HEIGHT){
+        p->y = 0;
+    }
 }
 
 void player_char(player_t* p, char c) {
     // Respond to keypresses
-    // fprintf(stderr, "char: %x\n", '\x8');
+    // fprintf(stderr, "char: %x\n", c);
     switch (c) {
     case 'w':
         p->dy = -4;
@@ -136,28 +154,28 @@ void player_char(player_t* p, char c) {
             p->dx++;
         }
         break;
-    case ' ':
+
+    case '=':
         if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == ' ') {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = '=';
-        } else
-        if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == '=') {
+        }
+        break;
+    case '\x7f':
+        if (world.stage[p->y+p->wand_y][p->x+p->wand_x] != '#') {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
         }
         break;
     case '/':
         if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == ' ') {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = '/';
-        } else {
-            world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
         }
         break;
     case '\\':
         if (world.stage[p->y+p->wand_y][p->x+p->wand_x] == ' ') {
             world.stage[p->y+p->wand_y][p->x+p->wand_x] = '\\';
-        } else {
-            world.stage[p->y+p->wand_y][p->x+p->wand_x] = ' ';
         }
         break;
+
     case 'i':
         p->wand_x = 0;
         p->wand_y = -1;
@@ -177,28 +195,37 @@ void player_char(player_t* p, char c) {
     }
 }
 
-void player_draw(player_t* p, char buf[20][80], int width, int height) {
+
+void player_draw(player_t* p, char buf[WORLD_HEIGHT][WORLD_WIDTH], int width, int height) {
     // Render the board onto buf, which has size (width * height)
     memcpy(buf, world.stage, width*height);
     //memset(buf, ' ', width*height);
     for (int i=0; i<WORLD_CAPACITY; i++) {
         if (world.players[i] != NULL) {
-            buf[world.players[i]->y][world.players[i]->x] = 'o';
-            buf[world.players[i]->y+world.players[i]->wand_y][world.players[i]->x+world.players[i]->wand_x] = '*';
+            int x = world.players[i]->x;
+            int y = world.players[i]->y;
+            int wx = world.players[i]->wand_x;
+            int wy = world.players[i]->wand_y;
+            if (bound_check(x, y)){
+                buf[y][x] = 'o';
+            }
+            if (bound_check(x+wx, y+wy)){
+                buf[y+wy][x+wx] = '*';
+            }
         }
     }
 
     // Pretty border
-    for (int i=0; i<width; i++) {
-        buf[0][i] = '-';
-        buf[height-1][i] = '-';
-    }
-    for (int j=0; j<height; j++) {
-        buf[j][0] = '|';
-        buf[j][width-1] = '|';
-    }
-    buf[0][0] = '+';
-    buf[height-1][width-1] = '+';
-    buf[0][width-1] = '+';
-    buf[height-1][0] = '+';
+    // for (int i=0; i<width; i++) {
+    //     buf[0][i] = '-';
+    //     buf[height-1][i] = '-';
+    // }
+    // for (int j=0; j<height; j++) {
+    //     buf[j][0] = '|';
+    //     buf[j][width-1] = '|';
+    // }
+    // buf[0][0] = '+';
+    // buf[height-1][width-1] = '+';
+    // buf[0][width-1] = '+';
+    // buf[height-1][0] = '+';
 }

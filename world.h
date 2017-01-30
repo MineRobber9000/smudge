@@ -4,9 +4,13 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
+#include <stdbool.h>
 
 #define WORLD_TIMEOUT 4
 #define WORLD_CAPACITY 1024
+
+#define WORLD_WIDTH  80
+#define WORLD_HEIGHT 20
 
 
 typedef struct world {
